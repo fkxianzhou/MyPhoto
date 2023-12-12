@@ -90,4 +90,27 @@ public class MainActivity extends AppCompatActivity {
         // 获取媒体图像的Uri
         Uri uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
         // 查询媒体图像的数据
-        Cursor cursor = content
+        Cursor cursor = contentResolver.query(uri, null, null, null, null);
+        // 判断查询结果是否为空
+        if (cursor != null) {
+            // 遍历查询结果
+            while (cursor.moveToNext()) {
+                // 获取图像的路径
+                int columnIndex = cursor.getColumnIndex(MediaStore.Images.Media.DATA);
+                // 判断列索引是否为-1
+                if (columnIndex != -1) {
+                    // 如果不是，获取图像的路径
+                    String imagePath = cursor.getString(columnIndex);
+                    // 添加图像路径到列表
+                    imagePaths.add(imagePath);
+                    // 将图像的路径和其他信息插入到数据库中
+                    dbHelper.insertImage(imagePath);
+                }
+            }
+            // 关闭游标
+            cursor.close();
+            // 通知适配器数据发生变化
+            imageAdapter.notifyDataSetChanged();
+        }
+    }
+}
