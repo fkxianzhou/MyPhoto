@@ -19,6 +19,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import com.example.myphoto.FeedReaderContract.FeedEntry;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,6 +31,7 @@ public class MainActivity extends AppCompatActivity {
     private ImageView imageView; // 图像视图
     private List<String> imagePaths; // 图像路径列表
     private ImageAdapter imageAdapter; // 图像适配器
+    private FeedReaderDbHelper dbHelper; // 数据库帮助器
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
         imagePaths = new ArrayList<>(); // 初始化图像路径列表
         imageAdapter = new ImageAdapter(this, imagePaths); // 初始化图像适配器
         listView.setAdapter(imageAdapter); // 设置列表视图的适配器
+        dbHelper = new FeedReaderDbHelper(this); // 初始化数据库帮助器
 
         // 设置列表视图的点击事件监听器
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -86,20 +90,4 @@ public class MainActivity extends AppCompatActivity {
         // 获取媒体图像的Uri
         Uri uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
         // 查询媒体图像的数据
-        Cursor cursor = contentResolver.query(uri, null, null, null, null);
-        // 判断查询结果是否为空
-        if (cursor != null) {
-            // 遍历查询结果
-            while (cursor.moveToNext()) {
-                // 获取图像的路径
-                String imagePath = cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DATA));
-                // 添加图像路径到列表
-                imagePaths.add(imagePath);
-            }
-            // 关闭游标
-            cursor.close();
-            // 通知适配器数据发生变化
-            imageAdapter.notifyDataSetChanged();
-        }
-    }
-}
+        Cursor cursor = content
