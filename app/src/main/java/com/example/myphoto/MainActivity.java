@@ -103,7 +103,7 @@ public class MainActivity extends AppCompatActivity {
                     String imagePath = cursor.getString(columnIndex);
                     // 添加图像路径到列表
                     imagePaths.add(imagePath);
-                    // 将图像的路径和其他信息插入到数据库中
+                    // **将图像的路径和其他信息插入到数据库中**
                     dbHelper.insertImage(imagePath);
                 }
             }
