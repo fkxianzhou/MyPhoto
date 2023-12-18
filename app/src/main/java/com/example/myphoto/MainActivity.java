@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -18,8 +19,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-
-import com.example.myphoto.FeedReaderContract.FeedEntry;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +31,9 @@ public class MainActivity extends AppCompatActivity {
     private List<String> imagePaths; // 图像路径列表
     private ImageAdapter imageAdapter; // 图像适配器
     private FeedReaderDbHelper dbHelper; // 数据库帮助器
+    private ImageCollector imageCollector; // 图片收藏器
+    private Button btnCollect; // 收藏按钮
+    private int currentImagePosition = -1; // 当前显示图像的位置
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +46,17 @@ public class MainActivity extends AppCompatActivity {
         imageAdapter = new ImageAdapter(this, imagePaths); // 初始化图像适配器
         listView.setAdapter(imageAdapter); // 设置列表视图的适配器
         dbHelper = new FeedReaderDbHelper(this); // 初始化数据库帮助器
+        imageCollector = new ImageCollector(this); // 初始化图片收藏器
+        btnCollect = findViewById(R.id.btnCollect); // 获取收藏按钮
+
+        // 设置按钮点击事件监听器
+        btnCollect.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // 处理收藏按钮点击事件
+                collectCurrentImage();
+            }
+        });
 
         // 设置列表视图的点击事件监听器
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -53,6 +66,7 @@ public class MainActivity extends AppCompatActivity {
                 String imagePath = imagePaths.get(position);
                 // 设置图像视图的图像源
                 imageView.setImageURI(Uri.parse(imagePath));
+                currentImagePosition = position; // 记录当前显示图像的位置
             }
         });
 
@@ -103,14 +117,31 @@ public class MainActivity extends AppCompatActivity {
                     String imagePath = cursor.getString(columnIndex);
                     // 添加图像路径到列表
                     imagePaths.add(imagePath);
-                    // **将图像的路径和其他信息插入到数据库中**
-                    dbHelper.insertImage(imagePath);
                 }
             }
             // 关闭游标
             cursor.close();
             // 通知适配器数据发生变化
             imageAdapter.notifyDataSetChanged();
+        }
+    }
+
+    // 处理收藏按钮点击事件
+    public void onCollectButtonClick(View view) {
+        collectCurrentImage();
+    }
+
+    // 收藏当前显示的图像
+    private void collectCurrentImage() {
+        // 检查是否有图像被显示
+        if (currentImagePosition != -1 && currentImagePosition < imagePaths.size()) {
+            // 获取当前显示的图像路径
+            String currentImagePath = imagePaths.get(currentImagePosition);
+            // 添加当前图像到收藏
+            imageCollector.addToCollection(currentImagePath);
+            Toast.makeText(this, "图像已收藏", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, "无法收藏当前图像", Toast.LENGTH_SHORT).show();
         }
     }
 }
