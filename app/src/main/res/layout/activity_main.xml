@@ -23,5 +23,14 @@
             android:layout_alignParentBottom="true"
             android:text="收藏"
             android:onClick="onCollectButtonClick" />
+    <!-- res/layout/activity_main.xml -->
+    <Button
+            android:id="@+id/btnViewCollection"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="查看收藏"
+            android:onClick="onViewCollectionButtonClick"/>
+
+
 
 </LinearLayout>

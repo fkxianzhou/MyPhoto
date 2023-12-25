@@ -3,6 +3,7 @@ package com.example.myphoto;
 
 import android.Manifest;
 import android.content.ContentResolver;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
@@ -33,6 +34,7 @@ public class MainActivity extends AppCompatActivity {
     private FeedReaderDbHelper dbHelper; // 数据库帮助器
     private ImageCollector imageCollector; // 图片收藏器
     private Button btnCollect; // 收藏按钮
+    private Button btnViewCollection; // 查看收藏按钮
     private int currentImagePosition = -1; // 当前显示图像的位置
 
     @Override
@@ -48,6 +50,7 @@ public class MainActivity extends AppCompatActivity {
         dbHelper = new FeedReaderDbHelper(this); // 初始化数据库帮助器
         imageCollector = new ImageCollector(this); // 初始化图片收藏器
         btnCollect = findViewById(R.id.btnCollect); // 获取收藏按钮
+        btnViewCollection = findViewById(R.id.btnViewCollection); // 获取查看收藏按钮
 
         // 设置按钮点击事件监听器
         btnCollect.setOnClickListener(new View.OnClickListener() {
@@ -55,6 +58,15 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 // 处理收藏按钮点击事件
                 collectCurrentImage();
+            }
+        });
+
+        // 设置查看收藏按钮点击事件监听器
+        btnViewCollection.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // 处理查看收藏按钮点击事件
+                openImageCollectionActivity();
             }
         });
 
@@ -143,5 +155,18 @@ public class MainActivity extends AppCompatActivity {
         } else {
             Toast.makeText(this, "无法收藏当前图像", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    // 处理查看收藏按钮点击事件
+    // 在 MainActivity.java 中添加方法
+    public void onViewCollectionButtonClick(View view) {
+        openImageCollectionActivity();
+    }
+
+
+    // 打开查看收藏页面
+    private void openImageCollectionActivity() {
+        Intent intent = new Intent(this, ImageCollectionActivity.class);
+        startActivity(intent);
     }
 }
